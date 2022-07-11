@@ -25,14 +25,17 @@ public class Player : MonoBehaviour
         if (_photonView.IsMine)
         {
             freeLookCam.SetTarget(gameObject.transform);
-            gameObject.tag = "OtherPlayer";
             _state = Idle;
+        }
+        else
+        {
+            gameObject.tag = "OtherPlayer";
         }
     }
 
     void Update()
     {
-        if (!_photonView.IsMine)
+        if (_photonView.IsMine)
         {
             _state.Invoke();
             //gameObject.tag = "OtherPlayer";
@@ -68,7 +71,7 @@ public class Player : MonoBehaviour
     {
         if (_photonView.IsMine)
         {
-            Debug.Log("Current State = Idle State");
+            Debug.Log("Current State = Interface State");
 
             if (!Cursor.visible)
             {
@@ -95,6 +98,7 @@ public class Player : MonoBehaviour
         {
             GameObject newTurret = PhotonNetwork.Instantiate(turretName, Vector3.zero, Quaternion.identity);
             newTurret.transform.SetParent(gameObject.transform.GetChild(4).transform);
+            newTurret.transform.SetPositionAndRotation(new Vector3(0f, 0.4f, 1.25f), new Quaternion(0f, 0f, 0f, 1f));
         }
     }
 

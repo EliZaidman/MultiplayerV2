@@ -6,13 +6,15 @@ using Photon.Pun;
 public class SpawnTurret : MonoBehaviour
 {
     private PhotonView _photonView;
-    private GameObject _turret;
+    [SerializeField] private GameObject _turret;
+    [SerializeField] private BoxCollider _turretSpawnerCollider;
     private const string _playerTag = "Player";
     private bool _canSpawn = false;
 
     private void Start()
     {
         _photonView = GetComponent<PhotonView>();
+        _turretSpawnerCollider = GetComponent<BoxCollider>();
     }
 
     private void Update()
@@ -22,9 +24,11 @@ public class SpawnTurret : MonoBehaviour
             if (_canSpawn)
             {
                 PhotonNetwork.Instantiate(_turret.name, transform.position, Quaternion.identity);
-                // BankManager.Instance.PhotonView.RPC("BuyTurret", RpcTarget.All)
+                BankManager.Instance.PhotonView.RPC("BuyTurret", RpcTarget.All);
+                print("ME PUT TARTARTARTER");
             }
         }
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -33,6 +37,9 @@ public class SpawnTurret : MonoBehaviour
         {
             _canSpawn = true;
         }
+        print("ME INSSIDE");
+        
+
     }
 
     private void OnTriggerExit(Collider other)
@@ -41,5 +48,13 @@ public class SpawnTurret : MonoBehaviour
         {
             _canSpawn = false;
         }
+        print("ME EXIT");
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(_turretSpawnerCollider.transform.position, _turretSpawnerCollider.transform.localScale); ;
+        //Gizmos.DrawSphere(transform.position, 2);
     }
 }

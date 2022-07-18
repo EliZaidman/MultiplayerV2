@@ -4,17 +4,12 @@ using UnityStandardAssets.Cameras;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private PhotonView _photonView;
-    public PhotonView PhotonView => _photonView;
-
+    [SerializeField] PhotonView photonView;
     [SerializeField] FreeLookCam freeLookCam;
-
-    private delegate void State();
-    private State _state;
 
     void Awake()
     {
-        if (_photonView.IsMine)
+        if (photonView.IsMine)
         {
             freeLookCam = FindObjectOfType<FreeLookCam>();
         }
@@ -22,85 +17,17 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        if (_photonView.IsMine)
+        if (photonView.IsMine)
         {
             freeLookCam.SetTarget(gameObject.transform);
-            _state = Idle;
-        }
-        else
-        {
-            gameObject.tag = "OtherPlayer";
         }
     }
 
     void Update()
     {
-        if (_photonView.IsMine)
+        if (!photonView.IsMine)
         {
-            _state.Invoke();
-            //gameObject.tag = "OtherPlayer";
+            gameObject.tag = "OtherPlayer";
         }
     }
-
-    private void FreeMouse(bool value)
-    {
-        Cursor.visible = value;
-        Cursor.lockState = Cursor.visible ? CursorLockMode.None : CursorLockMode.Locked;
-    }
-
-    #region States
-    private void Idle()
-    {
-        if (_photonView.IsMine)
-        {
-            Debug.Log("Current State = Idle State");
-
-            if (Cursor.visible)
-            {
-                FreeMouse(false);
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftAlt))
-            {
-                _state = Interface;
-            }
-        }
-    }
-
-    private void Interface()
-    {
-        if (_photonView.IsMine)
-        {
-            Debug.Log("Current State = Interface State");
-
-            if (!Cursor.visible)
-            {
-                FreeMouse(true);
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftAlt))
-            {
-                _state = Idle;
-            }
-        }
-    }
-    #endregion
-
-    #region PunRPC
-    // methods to call from _photonView and will happen over the network (photonView.RPC("methodNameRPC", RpcTarget.All, argument1, argument2);)
-
-    // cannot pass custom Types as argument (no custom classes, no gameObjects no Lists, no enums etc... mostly int, stings and bool)
-
-    [PunRPC]
-    private void SpawnTurretRPC(string turretName)
-    {
-        if (_photonView.IsMine)
-        {
-            GameObject newTurret = PhotonNetwork.Instantiate(turretName, Vector3.zero, Quaternion.identity);
-            newTurret.transform.SetParent(gameObject.transform.GetChild(4).transform);
-            newTurret.transform.SetPositionAndRotation(new Vector3(0f, 0.4f, 1.25f), new Quaternion(0f, 0f, 0f, 1f));
-        }
-    }
-
-    #endregion
 }

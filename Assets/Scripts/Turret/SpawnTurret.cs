@@ -23,12 +23,11 @@ public class SpawnTurret : MonoBehaviour
         {
             if (_canSpawn)
             {
-                PhotonNetwork.Instantiate(_turret.name, transform.position, Quaternion.identity);
-                BankManager.Instance.PhotonView.RPC("BuyTurret", RpcTarget.All);
-                print("ME PUT TARTARTARTER");
+                PhotonNetwork.Instantiate(_turret.name, transform.position - new Vector3(0, 0, 0), Quaternion.identity);
+                //BankManager.Instance.PhotonView.RPC("BuyTurret", RpcTarget.All);
+                Debug.Log("ME PUT TARTARTARTER");
             }
         }
-        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -37,9 +36,7 @@ public class SpawnTurret : MonoBehaviour
         {
             _canSpawn = true;
         }
-        print("ME INSSIDE");
-        
-
+        Debug.Log("ME INSSIDE");
     }
 
     private void OnTriggerExit(Collider other)
@@ -48,13 +45,12 @@ public class SpawnTurret : MonoBehaviour
         {
             _canSpawn = false;
         }
-        print("ME EXIT");
+        Debug.Log("ME EXIT");
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(_turretSpawnerCollider.transform.position, _turretSpawnerCollider.transform.localScale); ;
-        //Gizmos.DrawSphere(transform.position, 2);
+        Gizmos.DrawWireCube(_turretSpawnerCollider.transform.position, new Vector3(1, 1, 1));
     }
 }
